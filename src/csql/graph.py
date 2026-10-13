@@ -16,6 +16,7 @@ class AgentState(TypedDict, total=False):
     error: str | None
     answer: str
     trace: list[dict]
+    skip_answer: bool
 
 
 def build_graph():
@@ -31,5 +32,11 @@ def build_graph():
     return g.compile()
 
 
-def ask(question: str, model: str | None = None) -> AgentState:
-    return build_graph().invoke({"question": question, "model": model, "trace": []})
+def ask(
+    question: str, model: str | None = None, config: str = "baseline", with_answer: bool = True
+) -> AgentState:
+    if config != "baseline":
+        raise ValueError(f"unknown config {config!r}")
+    return build_graph().invoke(
+        {"question": question, "model": model, "trace": [], "skip_answer": not with_answer}
+    )

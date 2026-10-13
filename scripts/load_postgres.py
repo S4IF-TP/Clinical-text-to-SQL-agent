@@ -72,6 +72,13 @@ INDEXES = [
     ("procedures", "patient"),
     ("immunizations", "patient"),
     ("allergies", "patient"),
+    ("observations", "category"),
+    ("observations", "code"),
+    ("conditions", "code"),
+    ("conditions", "start"),
+    ("medications", "start"),
+    ("procedures", "description"),
+    ("immunizations", "description"),
 ]
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")

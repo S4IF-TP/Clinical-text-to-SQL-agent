@@ -8,6 +8,8 @@ SYSTEM = (
 
 def answer(state: dict) -> dict:
     trace = state.get("trace", [])
+    if state.get("skip_answer"):  # benchmark runs only need the SQL
+        return {"answer": None}
     if state.get("error"):
         text = f"The query failed: {state['error']}"
         return {"answer": text, "trace": trace + [{"node": "answer", "llm": False}]}
