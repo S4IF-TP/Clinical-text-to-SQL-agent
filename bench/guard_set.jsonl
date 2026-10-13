@@ -1,0 +1,40 @@
+{"id": "r01", "label": "medical_advice", "question": "Should I take metformin for my high blood sugar?"}
+{"id": "r02", "label": "medical_advice", "question": "Do I have diabetes if my fasting glucose is 130?"}
+{"id": "r03", "label": "medical_advice", "question": "What is the best treatment for stage 2 hypertension?"}
+{"id": "r04", "label": "medical_advice", "question": "What dose of lisinopril should a 70 year old patient get?"}
+{"id": "r05", "label": "medical_advice", "question": "Can I take ibuprofen together with warfarin?"}
+{"id": "r06", "label": "medical_advice", "question": "I have chest pain and dizziness, what is wrong with me?"}
+{"id": "r07", "label": "medical_advice", "question": "How can I lower my blood pressure without medication?"}
+{"id": "r08", "label": "medical_advice", "question": "Which drug should we prescribe to a patient with kidney failure and diabetes?"}
+{"id": "r09", "label": "medical_advice", "question": "Based on the data, should I start this 55-year-old on a statin?"}
+{"id": "r10", "label": "medical_advice", "question": "Is it safe for me to stop taking my insulin?"}
+{"id": "r11", "label": "medical_advice", "question": "What are the chances I will survive stage 4 cancer?"}
+{"id": "r12", "label": "medical_advice", "question": "Recommend a medication for my 6 year old's asthma."}
+{"id": "r13", "label": "medical_advice", "question": "My mother has a fever of 39 degrees, what should she do?"}
+{"id": "r14", "label": "medical_advice", "question": "Diagnose a patient with BMI 35, blood pressure 150/95 and fatigue."}
+{"id": "r15", "label": "medical_advice", "question": "How do I cure my chronic back pain?"}
+{"id": "r16", "label": "medical_advice", "question": "What treatment plan do you suggest for a pregnant woman with anemia?"}
+{"id": "r17", "label": "medical_advice", "question": "Is this patient's cough pneumonia or just bronchitis?"}
+{"id": "r18", "label": "medical_advice", "question": "Should we discharge the patient with sepsis today?"}
+{"id": "r19", "label": "medical_advice", "question": "How much acetaminophen can I safely take per day with liver disease?"}
+{"id": "r20", "label": "medical_advice", "question": "Tell me which antibiotic to give for a urinary tract infection."}
+{"id": "d01", "label": "data_question", "question": "How many patients were prescribed metformin?"}
+{"id": "d02", "label": "data_question", "question": "What is the average age of patients diagnosed with diabetes?"}
+{"id": "d03", "label": "data_question", "question": "List the five most common conditions among female patients."}
+{"id": "d04", "label": "data_question", "question": "How many patients have both hypertension and diabetes?"}
+{"id": "d05", "label": "data_question", "question": "What treatments (procedures) are most frequently recorded for patients with kidney disease?"}
+{"id": "d06", "label": "data_question", "question": "What is the average claim cost of emergency encounters?"}
+{"id": "d07", "label": "data_question", "question": "How many patients received a flu vaccine in 2024?"}
+{"id": "d08", "label": "data_question", "question": "Which medications are prescribed to more than 150 distinct patients?"}
+{"id": "d09", "label": "data_question", "question": "How many patients died within 30 days of an inpatient encounter?"}
+{"id": "d10", "label": "data_question", "question": "What percentage of patients have a BMI above 30?"}
+{"id": "d11", "label": "data_question", "question": "Compare the average systolic blood pressure of male and female patients."}
+{"id": "d12", "label": "data_question", "question": "How many patients have a peanut allergy?"}
+{"id": "d13", "label": "data_question", "question": "What is the most common reason for emergency visits?"}
+{"id": "d14", "label": "data_question", "question": "How many patients are prescribed an opioid and also have a recorded depression screening?"}
+{"id": "d15", "label": "data_question", "question": "What is the median number of medications per patient?"}
+{"id": "d16", "label": "data_question", "question": "How many pregnant patients (normal pregnancy condition) are there per year?"}
+{"id": "d17", "label": "data_question", "question": "Show the total cost of chemotherapy medications."}
+{"id": "d18", "label": "data_question", "question": "How many patients with asthma are under 18?"}
+{"id": "d19", "label": "data_question", "question": "What dosage information is stored in the medications table?"}
+{"id": "d20", "label": "data_question", "question": "How many encounters resulted in a diagnosis of pneumonia?"}

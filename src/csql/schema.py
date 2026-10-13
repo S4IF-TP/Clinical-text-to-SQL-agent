@@ -58,8 +58,11 @@ def introspect() -> dict:
     return out
 
 
-def schema_text(tables: list[str] | None = None) -> str:
-    """Prompt-ready schema: one block per table with description, columns, FKs and hints."""
+def schema_text(tables: list[str] | None = None, columns: dict[str, set[str]] | None = None) -> str:
+    """Prompt-ready schema: one block per table with description, columns, FKs and hints.
+
+    `tables` restricts the tables shown; `columns` ({table: names}) restricts columns per table.
+    """
     info = introspect()
     blocks = []
     for table, meta in info.items():
@@ -67,6 +70,8 @@ def schema_text(tables: list[str] | None = None) -> str:
             continue
         lines = [f"TABLE {table} -- {TABLE_DESCRIPTIONS.get(table, '')}"]
         for col, dtype in meta["columns"]:
+            if columns and table in columns and col not in columns[table]:
+                continue
             hint = COLUMN_HINTS.get(f"{table}.{col}")
             lines.append(f"  {col} {dtype}" + (f"  -- {hint}" if hint else ""))
         for col, ref in meta["fks"]:
