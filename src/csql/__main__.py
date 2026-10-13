@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from csql.graph import ask
 
@@ -10,6 +11,7 @@ def main() -> None:
     parser.add_argument("question")
     parser.add_argument("--model", default=None, help="override LLM_MODEL")
     args = parser.parse_args()
+    sys.stdout.reconfigure(encoding="utf-8")  # Windows consoles default to cp1252
 
     state = ask(args.question, model=args.model)
     print("SQL:\n" + state["sql"])
