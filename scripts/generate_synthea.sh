@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Generate synthetic patients with Synthea (CSV export). Reproducible: fixed seed + reference date.
+# Generate synthetic patients with Synthea (CSV export). Reproducible: fixed seeds + snapshot date.
 # Usage: POPULATION=500 ./scripts/generate_synthea.sh      (default 2000)
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 POPULATION="${POPULATION:-2000}"
 SEED="${SEED:-42}"
-REFERENCE_DATE="${REFERENCE_DATE:-20260101}"   # pins "today" so ages/dates are stable
+SNAPSHOT_DATE="${SNAPSHOT_DATE:-20260101}"   # pins "today": simulation end (-e) and age reference (-r)
 JAR="data/synthea-with-dependencies.jar"
 OUT="data/synthea"
 
@@ -18,7 +18,7 @@ if [ ! -f "$JAR" ]; then
 fi
 
 rm -rf "$OUT"
-java -jar "$JAR" -s "$SEED" -r "$REFERENCE_DATE" -p "$POPULATION" \
+java -jar "$JAR" -s "$SEED" -cs "$SEED" -r "$SNAPSHOT_DATE" -e "$SNAPSHOT_DATE" -p "$POPULATION" \
   --exporter.baseDirectory="$OUT" \
   --exporter.csv.export=true \
   --exporter.fhir.export=false \

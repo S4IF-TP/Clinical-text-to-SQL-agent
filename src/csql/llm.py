@@ -17,7 +17,7 @@ class LLMResult:
 def chat(messages: list[dict], model: str | None = None, temperature: float = 0.0) -> LLMResult:
     """One call to any OpenAI-compatible server (Ollama, vLLM). Swap models via the string."""
     s = get_settings()
-    client = OpenAI(base_url=s.llm_base_url, api_key=s.llm_api_key)
+    client = OpenAI(base_url=s.llm_base_url, api_key=s.llm_api_key, max_retries=8)
     t0 = time.perf_counter()
     resp = client.chat.completions.create(
         model=model or s.llm_model, messages=messages, temperature=temperature
