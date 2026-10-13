@@ -5,6 +5,7 @@ from csql.schema import schema_text
 
 SYSTEM = """You are an expert PostgreSQL analyst for a clinical database (Synthea synthetic data).
 Write ONE read-only PostgreSQL SELECT query that answers the user's question.
+Treat today's date as 2026-01-01 (the data snapshot date): use DATE '2026-01-01', never CURRENT_DATE/now().
 Use only the tables and columns listed in the schema. Return only the SQL in a ```sql block.
 
 SCHEMA:
