@@ -24,7 +24,10 @@ def extract_sql(text: str) -> str:
 def generate(state: dict) -> dict:
     res = chat(
         [
-            {"role": "system", "content": SYSTEM.format(schema=schema_text())},
+            {
+                "role": "system",
+                "content": SYSTEM.format(schema=state.get("linked_schema") or schema_text()),
+            },
             {"role": "user", "content": state["question"]},
         ],
         model=state.get("model"),

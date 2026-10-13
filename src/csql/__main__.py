@@ -10,10 +10,13 @@ def main() -> None:
     )
     parser.add_argument("question")
     parser.add_argument("--model", default=None, help="override LLM_MODEL")
+    parser.add_argument(
+        "--config", default="full", help="baseline | link | correct | both | full (default)"
+    )
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")  # Windows consoles default to cp1252
 
-    state = ask(args.question, model=args.model)
+    state = ask(args.question, model=args.model, config=args.config)
     print("SQL:\n" + state["sql"])
     if state.get("error"):
         print("\nERROR:", state["error"])

@@ -10,6 +10,7 @@ app = FastAPI(title="Clinical Text-to-SQL Agent")
 class AskRequest(BaseModel):
     question: str
     model: str | None = None
+    config: str = "full"
 
 
 @app.get("/health")
@@ -21,7 +22,7 @@ def health() -> dict:
 def ask_endpoint(req: AskRequest) -> dict:
     """Returns {sql, columns, rows, answer, trace, refused, error}."""
     try:
-        state = ask(req.question, model=req.model)
+        state = ask(req.question, model=req.model, config=req.config)
     except Exception as e:  # LLM unreachable, bad key, etc.
         return {
             "sql": None,

@@ -15,7 +15,11 @@ groups: dict[tuple, list[list[dict]]] = defaultdict(list)
 for f in sorted(results.glob("*__run*.csv")):
     model, config, split, _run = f.stem.split("__")
     with f.open(encoding="utf-8") as fh:
-        groups[(model.replace("_", "/", 1), config, split)].append(list(csv.DictReader(fh)))
+        rows = list(csv.DictReader(fh))
+    if any(r.get("infra") == "1" for r in rows):
+        print(f"SKIPPED {f.name}: contains API-error rows, re-run with --resume")
+        continue
+    groups[(model.replace("_", "/", 1), config, split)].append(rows)
 
 
 def acc(rows: list[dict]) -> float:

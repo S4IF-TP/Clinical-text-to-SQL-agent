@@ -7,6 +7,7 @@ Writes bench/results/<model>__<config>__<split>__run<k>.csv (one row per questio
 import argparse
 import csv
 import json
+import re
 import time
 from pathlib import Path
 
@@ -16,6 +17,7 @@ from csql.graph import ask
 
 ROOT = Path(__file__).parent
 FIELDS = [
+    "infra",
     "id",
     "level",
     "split",
@@ -29,6 +31,18 @@ FIELDS = [
     "retries",
     "validation_failures",
 ]
+
+
+INFRA_RE = re.compile(
+    r"^(RateLimitError|APIConnectionError|APITimeoutError|InternalServerError|APIStatusError|"
+    r"BadRequestError|AuthenticationError|PermissionDeniedError|NotFoundError|ConflictError|"
+    r"UnprocessableEntityError):"
+)
+
+
+def is_infra(row: dict) -> bool:
+    """API/infrastructure failures are not model mistakes: they must be re-run, never scored."""
+    return str(row.get("infra", "")) == "1" or bool(INFRA_RE.match(row.get("error", "")))
 
 
 def load_questions(split: str, level: str | None, limit: int | None) -> list[dict]:
@@ -59,6 +73,7 @@ def evaluate(q: dict, model: str, config: str) -> dict:
     error = crash or state.get("error")
     correct = bool(not error and not state.get("refused") and results_match(pred_rows, gold_rows))
     return {
+        "infra": int(crash is not None),
         "id": q["id"],
         "level": q["level"],
         "split": q["split"],
@@ -84,6 +99,7 @@ def main() -> None:
     p.add_argument("--level", choices=["easy", "medium", "hard"])
     p.add_argument("--limit", type=int)
     p.add_argument("--run", type=int, default=1, help="repeat index, for variance runs")
+    p.add_argument("--resume", action="store_true", help="re-run only missing/infra-failed rows")
     args = p.parse_args()
 
     qs = load_questions(args.split, args.level, args.limit)
@@ -92,21 +108,36 @@ def main() -> None:
     safe_model = args.model.replace("/", "_")
     out = out_dir / f"{safe_model}__{args.config}__{args.split}__run{args.run}.csv"
 
-    rows = []
-    for i, q in enumerate(qs, 1):
-        r = evaluate(q, args.model, args.config)
-        rows.append(r)
-        print(
-            f"[{i}/{len(qs)}] {q['id']} {q['level']:6} {'OK ' if r['correct'] else 'BAD'} {r['error'][:80]}"
-        )
-    with out.open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=FIELDS)
-        w.writeheader()
-        w.writerows(rows)
+    done: dict[str, dict] = {}
+    if args.resume and out.exists():
+        with out.open(encoding="utf-8") as f:
+            done = {r["id"]: r for r in csv.DictReader(f) if not is_infra(r)}
+        print(f"resuming: {len(done)} clean rows kept")
 
-    acc = sum(r["correct"] for r in rows) / max(len(rows), 1)
+    def save() -> None:
+        with out.open("w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=FIELDS, extrasaction="ignore", restval="0")
+            w.writeheader()
+            w.writerows(by_id[q["id"]] for q in qs if q["id"] in by_id)
+
+    by_id = dict(done)
+    for i, q in enumerate(qs, 1):
+        if q["id"] in done:
+            continue
+        r = evaluate(q, args.model, args.config)
+        by_id[q["id"]] = r
+        save()  # checkpoint after every question
+        flag = "INFRA" if r["infra"] else ("OK " if r["correct"] else "BAD")
+        print(f"[{i}/{len(qs)}] {q['id']} {q['level']:6} {flag} {r['error'][:80]}")
+    rows = [by_id[q["id"]] for q in qs]
+    save()
+    n_infra = sum(is_infra(r) for r in rows)
+    if n_infra:
+        print(f"WARNING: {n_infra} rows hit API errors; re-run with --resume before using this run")
+
+    acc = sum(int(r["correct"]) for r in rows) / max(len(rows), 1)
     print(
-        f"\n{args.model} / {args.config} / {args.split}: {acc:.1%} ({sum(r['correct'] for r in rows)}/{len(rows)})"
+        f"\n{args.model} / {args.config} / {args.split}: {acc:.1%} ({sum(int(r['correct']) for r in rows)}/{len(rows)})"
     )
     print(f"Saved {out}")
 
