@@ -138,8 +138,8 @@ and an API key for an OpenAI-compatible LLM provider
 
 ```bash
 # 1. Clone and configure (never commit .env — it is gitignored)
-git clone https://github.com/<your-username>/clinical-sql-agent.git
-cd clinical-sql-agent
+git clone https://github.com/S4IF-TP/Clinical-text-to-SQL-agent.git
+cd Clinical-text-to-SQL-agent
 cp .env.example .env            # edit: set the two DB passwords and LLM_API_KEY / LLM_MODEL
 
 # 2. Start PostgreSQL (creates the read-only role automatically)
