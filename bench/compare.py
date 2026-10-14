@@ -4,10 +4,15 @@ Usage: uv run python bench/compare.py
 """
 
 import csv
+import json
 from collections import defaultdict
 from pathlib import Path
 
 results = Path(__file__).parent / "results"
+expected = {}  # split -> number of questions that run must contain
+for _l in (Path(__file__).parent / "questions.jsonl").read_text("utf-8").splitlines():
+    _q = json.loads(_l)
+    expected[_q["split"]] = expected.get(_q["split"], 0) + 1
 LEVELS = ["easy", "medium", "hard"]
 
 # (model, config, split) -> list of runs; each run is a list of row dicts
@@ -18,6 +23,11 @@ for f in sorted(results.glob("*__run*.csv")):
         rows = list(csv.DictReader(fh))
     if any(r.get("infra") == "1" for r in rows):
         print(f"SKIPPED {f.name}: contains API-error rows, re-run with --resume")
+        continue
+    if len(rows) != expected.get(split, len(rows)):
+        print(
+            f"SKIPPED {f.name}: incomplete ({len(rows)}/{expected[split]} rows), re-run with --resume"
+        )
         continue
     groups[(model.replace("_", "/", 1), config, split)].append(rows)
 

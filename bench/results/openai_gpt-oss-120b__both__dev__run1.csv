@@ -1,0 +1,30 @@
+infra,id,level,split,correct,error,pred_sql,n_rows_pred,n_rows_gold,latency_s,tokens,retries,validation_failures
+0,e01,easy,dev,1,,SELECT COUNT(*) AS patient_count FROM patients LIMIT 100,1,1,12.24,876,0,0
+0,e02,easy,dev,1,,SELECT COUNT(*) AS female_patient_count FROM patients WHERE gender = 'F' LIMIT 100,1,1,1.14,955,0,0
+0,e04,easy,dev,1,,SELECT COUNT(*) AS hispanic_patient_count FROM patients WHERE ethnicity = 'hispanic' LIMIT 100,1,1,2.74,1200,0,0
+0,e05,easy,dev,1,,SELECT COUNT(*) AS asian_patient_count FROM patients WHERE race = 'asian' LIMIT 100,1,1,3.29,1168,0,0
+0,e07,easy,dev,1,,SELECT COUNT(*) AS patient_count FROM patients WHERE city = 'Boston' LIMIT 100,1,1,7.08,991,0,0
+0,e08,easy,dev,1,,"SELECT city, COUNT(id) AS patient_count FROM patients GROUP BY city HAVING COUNT(id) > 30 ORDER BY patient_count DESC LIMIT 100",5,5,7.58,999,0,0
+0,e10,easy,dev,1,,SELECT MAX(healthcare_expenses) AS highest_healthcare_expense FROM patients LIMIT 100,1,1,4.12,1025,0,0
+0,e11,easy,dev,1,,SELECT COUNT(*) AS total_encounters FROM encounters LIMIT 100,1,1,0.67,906,0,0
+0,e13,easy,dev,1,,"SELECT encounterclass, COUNT(*) AS encounter_count FROM encounters GROUP BY encounterclass ORDER BY encounterclass LIMIT 100",10,10,6.92,974,0,0
+0,e14,easy,dev,1,,SELECT AVG(total_claim_cost) AS average_inpatient_claim_cost FROM encounters WHERE encounterclass = 'inpatient' LIMIT 100,1,1,1.31,970,0,0
+0,e16,easy,dev,1,,SELECT COUNT(DISTINCT description) AS distinct_condition_descriptions FROM conditions LIMIT 100,1,1,5.13,896,0,0
+0,e17,easy,dev,1,,SELECT COUNT(*) AS active_condition_count FROM conditions WHERE stop IS NULL LIMIT 100,1,1,0.96,931,0,0
+0,e19,easy,dev,1,,SELECT COUNT(*) AS records_without_stop_date FROM medications WHERE stop IS NULL LIMIT 100,1,1,1.84,903,0,0
+0,e20,easy,dev,1,,SELECT SUM(dispenses) AS total_dispenses FROM medications LIMIT 100,1,1,4.96,1185,0,0
+0,e22,easy,dev,1,,SELECT COUNT(*) AS systolic_bp_observations FROM observations WHERE description ILIKE '%systolic%' AND description ILIKE '%blood pressure%' LIMIT 100,1,1,5.7,1070,0,0
+0,e23,easy,dev,1,,SELECT AVG(CAST(value AS DECIMAL)) AS average_body_weight_kg FROM observations WHERE description = 'Body Weight' AND units = 'kg' LIMIT 100,1,1,2.43,1241,0,0
+0,e25,easy,dev,1,,SELECT SUM(base_cost) AS total_base_cost FROM procedures LIMIT 100,1,1,10.35,903,0,0
+0,e26,easy,dev,1,,"SELECT category, COUNT(*) AS allergy_record_count FROM allergies GROUP BY category ORDER BY allergy_record_count DESC LIMIT 100",3,3,2.89,1005,0,0
+0,e28,easy,dev,1,,SELECT COUNT(*) AS influenza_immunization_count FROM immunizations WHERE description ILIKE '%influenza%' LIMIT 100,1,1,1.53,973,0,0
+0,e29,easy,dev,1,,SELECT SUM(base_cost) AS total_base_cost FROM immunizations LIMIT 100,1,1,48.75,1168,0,0
+0,m01,medium,dev,1,,SELECT COUNT(DISTINCT patient) AS distinct_emergency_patients FROM encounters WHERE encounterclass = 'emergency' LIMIT 100,1,1,0.97,1235,0,0
+0,m02,medium,dev,0,,SELECT COUNT(DISTINCT c.patient) AS female_patients_with_essential_hypertension FROM conditions AS c JOIN patients AS p ON c.patient = p.id WHERE p.gender = 'F' AND LOWER(c.description) = 'essential hypertension' LIMIT 100,1,1,98.92,1189,0,0
+0,m04,medium,dev,0,,SELECT AVG(p.income) AS average_income FROM patients AS p WHERE p.id IN (SELECT DISTINCT c.patient FROM conditions AS c WHERE c.description = 'essential hypertension') LIMIT 100,1,1,250.47,1142,0,0
+0,m05,medium,dev,1,,SELECT COUNT(*) AS encounter_count FROM encounters AS e JOIN patients AS p ON e.patient = p.id WHERE p.city = 'Boston' LIMIT 100,1,1,498.77,1061,0,0
+0,m07,medium,dev,1,,"SELECT p.gender, COUNT(e.id) AS emergency_encounter_count FROM encounters AS e JOIN patients AS p ON e.patient = p.id WHERE e.encounterclass = 'emergency' GROUP BY p.gender ORDER BY p.gender LIMIT 100",2,2,296.13,1208,0,0
+0,m08,medium,dev,1,,"SELECT COALESCE(SUM(e.total_claim_cost), 0) AS total_claim_cost_of_deceased_patients FROM encounters AS e JOIN patients AS p ON e.patient = p.id WHERE p.deathdate IS NOT NULL LIMIT 100",1,1,463.38,1179,0,0
+0,m10,medium,dev,1,,SELECT COUNT(*) AS condition_count FROM conditions AS c JOIN encounters AS e ON c.encounter = e.id WHERE e.encounterclass = 'inpatient' LIMIT 100,1,1,501.71,1158,0,0
+0,m11,medium,dev,1,,SELECT COUNT(*) AS emergency_medication_count FROM medications AS m JOIN encounters AS e ON m.encounter = e.id WHERE e.encounterclass = 'emergency' LIMIT 100,1,1,326.72,1121,0,0
+0,m13,medium,dev,0,"connection timeout expired Multiple connection attempts failed. All failures were: - host: 'localhost', port: '5432', hostaddr: '::1': connection timeout expired - host: 'localhost', port: '5432', hostaddr: '127.0.0.1': connection timeout expired",SELECT COUNT(*) AS wellness_procedure_count FROM procedures AS p JOIN encounters AS e ON p.encounter = e.id WHERE e.encounterclass = 'wellness' LIMIT 100,0,1,974.74,1605,1,0
